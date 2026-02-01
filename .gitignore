@@ -1,0 +1,25 @@
+# Python byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Logs and temp files
+*.log
+*.tmp
+logs/
+multimodal_emotion_detection/logs/
+
+# Local datasets (large)
+multimodal_emotion_detection/data/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Optional: exclude large model artifacts if not intended for GitHub
+# Uncomment the next line to skip pushing models
+multimodal_emotion_detection/models/
