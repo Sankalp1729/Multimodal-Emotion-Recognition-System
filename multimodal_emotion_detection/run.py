@@ -1,5 +1,5 @@
 import argparse
-from inference.predict_emotion import predict_emotion
+from multimodal_emotion_detection.inference.predict_emotion import predict_emotion
 
 # CLI wrapper to run unified inference from the structured project
 

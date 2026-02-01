@@ -4,8 +4,18 @@ import tempfile
 import os
 import requests
 import numpy as np
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 app = FastAPI(title="Multimodal Emotion Detection API")
+
+# Compute project base and web directory
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+WEB_DIR = os.path.join(BASE_DIR, "web")
+
+# Mount static files for the minimal web UI (if present)
+if os.path.isdir(WEB_DIR):
+    app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
 # Allowed MIME types and size limits (bytes)
 IMAGE_MIME_TYPES = {"image/png", "image/jpeg", "image/jpg", "image/webp"}
@@ -239,3 +249,11 @@ async def ready():
         raise HTTPException(status_code=503, detail={"status": "not_ready", "checks": checks, "errors": errors})
 
     return {"status": "ready", "checks": checks}
+
+# Index route to serve the minimal web UI
+@app.get("/")
+async def index():
+    index_path = os.path.join(WEB_DIR, "index.html")
+    if not os.path.exists(index_path):
+        return {"message": "UI not found. Please create web/index.html"}
+    return FileResponse(index_path)

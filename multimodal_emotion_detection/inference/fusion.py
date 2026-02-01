@@ -18,8 +18,7 @@ def _ensure_fusion_model_loaded() -> bool:
     if _FUSION["loaded"]:
         return True
     try:
--        model_dir = MODELS_DIR / "fusion_model"
-+        model_dir = FUSION_MODEL_DIR
+        model_dir = FUSION_MODEL_DIR
         model_path = model_dir / "model.pkl"
         scaler_path = model_dir / "scaler.pkl"
         meta_path = model_dir / "meta.json"

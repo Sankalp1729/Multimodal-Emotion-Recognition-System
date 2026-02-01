@@ -21,8 +21,9 @@ TEXT_ALLOW_DOWNLOAD = os.getenv("MME_TEXT_ALLOW_DOWNLOAD", "0") in {"1", "true",
 
 EMOTIONS = ["happy", "sad", "angry", "neutral", "fear", "surprise", "disgust"]
 
+# Prefer local trained model and ignore unreliable fallbacks
 FUSION_WEIGHTS = {
-    "image": 0.4,
-    "audio": 0.35,
-    "text": 0.25,
+    "image": 0.8,
+    "audio": 1.0,
+    "text": 1.2,
 }

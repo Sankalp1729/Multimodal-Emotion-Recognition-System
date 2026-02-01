@@ -16,3 +16,4 @@ scikit-learn>=1.3.0
 requests>=2.31.0
 torchvision>=0.16.0
 Pillow>=10.0.0
+streamlit>=1.28.0

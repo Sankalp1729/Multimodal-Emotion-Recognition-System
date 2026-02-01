@@ -143,7 +143,7 @@ def predict_image_probs(img: np.ndarray) -> Optional[Dict[str, float]]:
     local = _predict_image_probs_local(img)
     if isinstance(local, dict) and local:
         return local
-    # Try DeepFace next, fallback to color-based heuristic
+    # Try DeepFace next; if unreliable, return None to avoid skewing fusion
     try:
         from deepface import DeepFace  # lazy import
         res = DeepFace.analyze(img, actions=["emotion"], enforce_detection=False)
@@ -154,14 +154,24 @@ def predict_image_probs(img: np.ndarray) -> Optional[Dict[str, float]]:
         probs = {DEEPFACE_TO_EMOTIONS.get(k.lower(), k.lower()): float(v)/total for k, v in raw.items()}
         for e in EMOTIONS:
             probs.setdefault(e, 0.0)
-        logger.info(f"Image modality: {probs}")
+        # Reject low-confidence / high-entropy distributions to avoid false positives (e.g., always 'surprise')
+        arr = __import__("numpy").np.array([probs.get(e, 0.0) for e in EMOTIONS], dtype=__import__("numpy").np.float32)
+        s = float(arr.sum()) or 1.0
+        arr = arr / s
+        entropy = float(-__import__("numpy").np.sum(arr * __import__("numpy").np.log(arr + 1e-12)) / __import__("numpy").np.log(len(EMOTIONS)))
+        maxp = float(arr.max())
+        if entropy > 0.9 or maxp < 0.4:
+            logger.info("DeepFace distribution considered unreliable; ignoring image modality.")
+            return None
+        logger.info(f"Image modality (deepface): {probs}")
         return probs
     except ImportError:
-        # DeepFace not installed or incompatible, use fallback
-        return _fallback_color_probs(img)
+        # DeepFace not installed or incompatible; avoid heuristic to prevent bias
+        logger.info("DeepFace unavailable; ignoring image modality.")
+        return None
     except Exception as e:
-        logger.error(f"Image predictor failed, using fallback: {e}")
-        return _fallback_color_probs(img)
+        logger.error(f"Image predictor failed; ignoring modality: {e}")
+        return None
 
 
 def image_confidence_from_probs(probs: Dict[str, float]) -> float:

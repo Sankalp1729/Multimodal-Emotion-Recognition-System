@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Multimodal Emotion Detection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <div class="card">
+      <header>
+        <h1 class="title">Multimodal Emotion Detection</h1>
+        <p class="subtitle">Upload image, audio, and/or text to analyze combined emotional cues. Note: Image is treated as a lightweight heuristic signal (no deep image ML yet).</p>
+      </header>
+
+      <div id="error-banner" class="error-banner hidden" role="alert"></div>
+
+      <section class="input">
+        <div id="image-input" class="input-section">
+          <div class="section-header">
+            <h2>Image (Lightweight signal) <span class="optional">(Optional)</span></h2>
+            <p class="helper">Lightweight image signal (heuristic). JPEG/PNG/WebP supported. Not deep image ML.</p>
+          </div>
+          <div id="image-drop" class="dropzone" tabindex="0">
+            <span>Drag & drop image here</span>
+            <button type="button" id="image-choose" class="btn-secondary">Choose file</button>
+            <input type="file" id="image-file" accept="image/png,image/jpeg,image/jpg,image/webp" hidden />
+          </div>
+          <div id="image-preview" class="preview hidden">
+            <img id="image-thumb" alt="Image preview" />
+            <div class="file-meta" id="image-meta"></div>
+            <button type="button" id="image-clear" class="btn-link">Clear</button>
+          </div>
+        </div>
+
+        <div id="audio-input" class="input-section">
+          <div class="section-header">
+            <h2>Audio <span class="optional">(Optional)</span></h2>
+            <p class="helper">WAV supported. MP3 is not supported at this time.</p>
+          </div>
+          <div class="filepicker">
+            <input type="file" id="audio-file" accept="audio/wav,audio/x-wav,audio/wave" />
+          </div>
+          <div id="audio-meta" class="file-meta"></div>
+          <button type="button" id="audio-clear" class="btn-link hidden">Clear</button>
+        </div>
+
+        <div id="text-input" class="input-section">
+          <div class="section-header">
+            <h2>Text <span class="optional">(Optional)</span></h2>
+            <p class="helper">Paste or type text. The system will treat it as a separate modality.</p>
+          </div>
+          <textarea id="text-area" rows="6" placeholder="Paste or type text here…"></textarea>
+          <div class="file-meta"><span id="text-count">0</span> / 2000</div>
+          <button type="button" id="text-clear" class="btn-link hidden">Clear</button>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button id="analyze-btn" class="btn-primary" disabled>
+          <span class="btn-label">Analyze Emotion</span>
+          <span class="spinner hidden" aria-hidden="true"></span>
+        </button>
+        <button id="reset-btn" class="btn-secondary">Reset</button>
+      </div>
+
+      <section id="results" class="results hidden" aria-live="polite">
+        <div class="final-card">
+          <div class="final-header">Final Prediction</div>
+          <div class="final-body">
+            <div class="final-emotion" id="final-emotion">—</div>
+            <div class="final-confidence" id="final-confidence">—</div>
+            <div class="final-note">Fused from available modalities to maximize accuracy.</div>
+          </div>
+        </div>
+
+        <div class="modality-grid">
+          <div class="modality-card" id="mod-image">
+            <div class="mod-title">Image (Lightweight)</div>
+            <div class="mod-emotion" id="mod-image-emotion">Not provided</div>
+            <div class="mod-confidence" id="mod-image-confidence">—</div>
+            <div class="bar">
+              <div class="bar-fill" id="mod-image-bar" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="modality-card" id="mod-audio">
+            <div class="mod-title">Audio</div>
+            <div class="mod-emotion" id="mod-audio-emotion">Not provided</div>
+            <div class="mod-confidence" id="mod-audio-confidence">—</div>
+            <div class="bar">
+              <div class="bar-fill" id="mod-audio-bar" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="modality-card" id="mod-text">
+            <div class="mod-title">Text</div>
+            <div class="mod-emotion" id="mod-text-emotion">Not provided</div>
+            <div class="mod-confidence" id="mod-text-confidence">—</div>
+            <div class="bar">
+              <div class="bar-fill" id="mod-text-bar" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
